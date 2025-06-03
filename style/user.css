@@ -1,0 +1,183 @@
+/* Reset and base styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  /* Sidebar styles */
+  .sidebar {
+    width: 220px;
+    background-color: #9a9a9a;
+    color: white;
+    position: fixed;
+    height: 100vh;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers children horizontally */
+  }
+  
+  .logo {
+    max-height: 80px;
+    margin-bottom: 0px;
+    display: block;
+    border-radius: 30px;
+  }
+  
+  /* Sidebar title */
+  .sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  /* Sidebar links */
+  .sidebar a {
+    width: 100%;
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    text-align: left;
+    box-sizing: border-box;
+  }
+  
+  .sidebar a:hover,
+  .sidebar a.active {
+    background-color: #000000;
+  }
+  
+  /* Main content area */
+  .main {
+    margin-left: 220px;
+    padding: 20px;
+  }
+  
+  /* Header styles */
+  .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(133, 121, 121);
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+  
+  .header input[type="text"] {
+    padding: 5px 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+ /* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+/* Add vertical borders between columns */
+th, td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd; /* vertical lines */
+}
+
+th:last-child,
+td:last-child {
+  border-right: none; /* Remove right border on last column */
+}
+
+/* Optional: Alternate row colors for better readability */
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Optional: Align specific columns */
+td:nth-child(1) {
+  font-weight: bold; /* Name column bold */
+}
+
+td:nth-child(3), th:nth-child(3) {
+  text-align: center; /* Center align action buttons */
+}
+
+
+th {
+  background-color: #3e4b59;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Button styles */
+.icon-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 30px;
+}
+
+/* Color for warning icon */
+.warn-icon {
+  color: #ffc107; /* Yellow */
+}
+
+/* Color for delete icon */
+.delete-icon {
+  color: #dc3545; /* Red */
+}
+
+/* Color for comments icon */
+.comment-icon {
+  color: #17a2b8; /* Teal */
+}
+
+/* Optional: Hover effect */
+.icon-button i:hover {
+  opacity: 0.7;
+  transform: scale(1.1);
+}
+
+/* Upload container */
+.upload-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.upload-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.upload-container input[type="text"],
+.upload-container select,
+.upload-container input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.upload-container button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-container button[type="submit"]:hover {
+  background-color: #0056b3;
+}

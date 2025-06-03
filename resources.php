@@ -1,0 +1,50 @@
+<?php // resources.php ?>
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: LogIn.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resources - StudySpare</title>
+  <link rel="stylesheet" href="style/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <?php include 'include/sidebar.php'; ?>
+  <div class="main">
+    <?php include 'include/header.php'; ?>
+    <div class="table-container">
+      <div class="heading">
+        <h2>All Resources</h2>
+      </div>
+      <table class="luser">
+        <thead>
+          <tr><td>Title</td><td>Type</td><td>Uploader</td><td>Action</td></tr>
+        </thead>
+        <tbody>
+         <?php
+include 'php/db.php';
+$result = $conn->query("SELECT r.*, u.name AS uploader FROM resources r JOIN users u ON r.uploader_id = u.id");
+while ($row = $result->fetch_assoc()):
+?>
+<tr>
+  <td><?= $row['title'] ?></td>
+  <td><?= strtoupper($row['type']) ?></td>
+  <td><?= $row['uploader'] ?></td>
+  <td>
+    <button class="icon-button"><i class="fas fa-trash delete-icon"></i></button>
+    <button class="icon-button"><i class="fas fa-check-circle approve-icon"></i></button>
+  </td>
+</tr>
+<?php endwhile; ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
