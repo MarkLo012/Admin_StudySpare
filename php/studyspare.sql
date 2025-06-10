@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 06, 2025 at 05:53 AM
+-- Generation Time: Jun 10, 2025 at 02:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -75,6 +75,13 @@ CREATE TABLE `uploads` (
   `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `uploads`
+--
+
+INSERT INTO `uploads` (`id`, `title`, `type`, `file_path`, `uploader_id`, `status`, `submitted_at`, `admin_id`, `user_id`) VALUES
+(9, 'CornHub', 'video', 'uploads/FB_VID_6404346187414575104.mp4', NULL, 'approved', '2025-06-10 11:50:42', 1, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -89,6 +96,13 @@ CREATE TABLE `users` (
   `status` enum('Active','Inactive','Banned') DEFAULT 'Active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `status`, `created_at`) VALUES
+(1, 'Mark Louie ', 'user@example.com', '123456789', 'Active', '2025-06-10 12:08:03');
 
 --
 -- Indexes for dumped tables
@@ -143,13 +157,13 @@ ALTER TABLE `resources`
 -- AUTO_INCREMENT for table `uploads`
 --
 ALTER TABLE `uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
