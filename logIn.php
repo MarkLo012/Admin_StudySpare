@@ -1,30 +1,23 @@
 <?php
-// logIn.php
-
 session_start();
-include 'php/db.php'; // make sure this path is correct
+include 'php/db.php'; // Make sure this is correct
 
 $error = "";
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Query the admin by email
     $stmt = $conn->prepare("SELECT * FROM admin WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($user = $result->fetch_assoc()) {
-        // Compare SHA-256 hashed password
         if (hash('sha256', $password) === $user['password']) {
-            // Login success
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
-
             header("Location: index.php");
             exit();
         } else {
