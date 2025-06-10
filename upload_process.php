@@ -32,19 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Use NULL where needed
-        $stmt->bind_param(
-            "ssssii",
-            $title,
-            $type,
-            $filePath,
-            $status,
-            $adminId,
-            $userId
-        );
+        $stmt->bind_param("ssssii", $title, $type, $filePath, $status, $adminId, $userId);
 
         // Execute and redirect
         if ($stmt->execute()) {
-            header("Location: upload.php?success=1");
+            header("Location: upresources.php?success=1");
             exit();
         } else {
             echo "Database error: " . $stmt->error;
@@ -55,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 } else {
-    header("Location: upload.php");
+    header("Location: upresources.php");
     exit();
 }
-?>

@@ -1,10 +1,10 @@
-<?php // resources.php ?>
 <?php
 session_start();
 if (!isset($_SESSION['admin_id'])) {
     header("Location: LogIn.php");
     exit();
 }
+include 'php/db.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,30 +18,56 @@ if (!isset($_SESSION['admin_id'])) {
   <?php include 'include/sidebar.php'; ?>
   <div class="main">
     <?php include 'include/header.php'; ?>
+
     <div class="table-container">
       <div class="heading">
-        <h2>All Resources</h2>
+        <h2>All Uploaded Resources</h2>
       </div>
+
       <table class="luser">
         <thead>
-          <tr><td>Title</td><td>Type</td><td>Uploader</td><td>Action</td></tr>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Uploader</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
-         <?php
-include 'php/db.php';
-$result = $conn->query("SELECT r.*, u.name AS uploader FROM resources r JOIN users u ON r.uploader_id = u.id");
-while ($row = $result->fetch_assoc()):
-?>
-<tr>
-  <td><?= $row['title'] ?></td>
-  <td><?= strtoupper($row['type']) ?></td>
-  <td><?= $row['uploader'] ?></td>
-  <td>
-    <button class="icon-button"><i class="fas fa-trash delete-icon"></i></button>
-    <button class="icon-button"><i class="fas fa-check-circle approve-icon"></i></button>
-  </td>
-</tr>
-<?php endwhile; ?>
+        <?php
+        $result = $conn->query("
+          SELECT u.*, 
+                 COALESCE(a.username, usr.name) AS uploader 
+          FROM uploads u
+          LEFT JOIN admin a ON u.admin_id = a.id
+          LEFT JOIN users usr ON u.user_id = usr.id
+          ORDER BY u.submitted_at DESC
+        ");
+
+        if ($result && $result->num_rows > 0):
+          while ($row = $result->fetch_assoc()):
+        ?>
+          <tr>
+            <td><?= htmlspecialchars($row['title']) ?></td>
+            <td><?= strtoupper(htmlspecialchars($row['type'])) ?></td>
+            <td><?= htmlspecialchars($row['uploader'] ?? 'Unknown') ?></td>
+            <td><?= ucfirst($row['status']) ?></td>
+            <td>
+              <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank" class="icon-button" title="View">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="delete_upload.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this resource?');" class="icon-button" title="Delete">
+                <i class="fas fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+        <?php
+          endwhile;
+        else:
+        ?>
+          <tr><td colspan="5">No resources found.</td></tr>
+        <?php endif; ?>
         </tbody>
       </table>
     </div>
