@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2025 at 02:47 PM
+-- Generation Time: Jun 16, 2025 at 05:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -80,7 +80,8 @@ CREATE TABLE `uploads` (
 --
 
 INSERT INTO `uploads` (`id`, `title`, `type`, `file_path`, `uploader_id`, `status`, `submitted_at`, `admin_id`, `user_id`) VALUES
-(9, 'CornHub', 'video', 'uploads/FB_VID_6404346187414575104.mp4', NULL, 'approved', '2025-06-10 11:50:42', 1, NULL);
+(9, 'CornHub', 'video', 'uploads/FB_VID_6404346187414575104.mp4', NULL, 'approved', '2025-06-10 11:50:42', 1, NULL),
+(10, 'tupad', 'ebook', 'uploads/Tupad.docx', NULL, 'approved', '2025-06-16 12:41:00', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -90,6 +91,7 @@ INSERT INTO `uploads` (`id`, `title`, `type`, `file_path`, `uploader_id`, `statu
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `studentid` varchar(8) NOT NULL,
   `name` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -101,8 +103,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `status`, `created_at`) VALUES
-(1, 'Mark Louie ', 'user@example.com', '123456789', 'Active', '2025-06-10 12:08:03');
+INSERT INTO `users` (`id`, `studentid`, `name`, `email`, `password`, `status`, `created_at`) VALUES
+(1, '21-03293', 'Mark Louie ', 'user@example.com', '123456789', 'Active', '2025-06-10 12:08:03');
 
 --
 -- Indexes for dumped tables
@@ -157,7 +159,7 @@ ALTER TABLE `resources`
 -- AUTO_INCREMENT for table `uploads`
 --
 ALTER TABLE `uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`

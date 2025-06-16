@@ -81,7 +81,7 @@ if ($latestUploads && $latestUploads->num_rows > 0):
         </div>
         <table class="luser">
           <thead>
-            <tr><td>Name</td><td>Email</td><td>Date</td><td>Action</td></tr>
+            <tr><td>Student ID</td><td>Name</td><td>Email</td><td>Date</td><td>Action</td></tr>
           </thead>
           <tbody>
 <?php
@@ -89,6 +89,7 @@ $latestUsers = $conn->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 
 while ($user = $latestUsers->fetch_assoc()):
 ?>
   <tr>
+    <td><?= htmlspecialchars($user['studentid']) ?></td>
     <td><?= htmlspecialchars($user['name']) ?></td>
     <td><?= htmlspecialchars($user['email']) ?></td>
     <td><?= date('m/d/y', strtotime($user['created_at'])) ?></td>

@@ -5,6 +5,34 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 include 'php/db.php';
+
+// Get filters
+$search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$type = isset($_GET['type']) ? $conn->real_escape_string($_GET['type']) : '';
+$date = isset($_GET['date']) ? $conn->real_escape_string($_GET['date']) : '';
+
+// Build query
+$sql = "
+  SELECT u.*, 
+         COALESCE(a.username, usr.name) AS uploader 
+  FROM uploads u
+  LEFT JOIN admin a ON u.admin_id = a.id
+  LEFT JOIN users usr ON u.user_id = usr.id
+  WHERE 1=1
+";
+
+if (!empty($search)) {
+    $sql .= " AND u.title LIKE '%$search%'";
+}
+if (!empty($type)) {
+    $sql .= " AND u.type = '$type'";
+}
+if (!empty($date)) {
+    $sql .= " AND DATE(u.submitted_at) = '$date'";
+}
+
+$sql .= " ORDER BY u.submitted_at DESC";
+$result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,37 +63,24 @@ include 'php/db.php';
           </tr>
         </thead>
         <tbody>
-        <?php
-        $result = $conn->query("
-          SELECT u.*, 
-                 COALESCE(a.username, usr.name) AS uploader 
-          FROM uploads u
-          LEFT JOIN admin a ON u.admin_id = a.id
-          LEFT JOIN users usr ON u.user_id = usr.id
-          ORDER BY u.submitted_at DESC
-        ");
-
-        if ($result && $result->num_rows > 0):
-          while ($row = $result->fetch_assoc()):
-        ?>
-          <tr>
-            <td><?= htmlspecialchars($row['title']) ?></td>
-            <td><?= strtoupper(htmlspecialchars($row['type'])) ?></td>
-            <td><?= htmlspecialchars($row['uploader'] ?? 'Unknown') ?></td>
-            <td><?= ucfirst($row['status']) ?></td>
-            <td>
-              <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank" class="icon-button" title="View">
-                <i class="fas fa-eye"></i>
-              </a>
-              <a href="delete_upload.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this resource?');" class="icon-button" title="Delete">
-                <i class="fas fa-trash"></i>
-              </a>
-            </td>
-          </tr>
-        <?php
-          endwhile;
-        else:
-        ?>
+        <?php if ($result && $result->num_rows > 0): ?>
+          <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+              <td><?= htmlspecialchars($row['title']) ?></td>
+              <td><?= strtoupper(htmlspecialchars($row['type'])) ?></td>
+              <td><?= htmlspecialchars($row['uploader'] ?? 'Unknown') ?></td>
+              <td><?= ucfirst($row['status']) ?></td>
+              <td>
+                <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank" class="icon-button" title="View">
+                  <i class="fas fa-eye"></i>
+                </a>
+                <a href="delete_upload.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this resource?');" class="icon-button" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          <?php endwhile; ?>
+        <?php else: ?>
           <tr><td colspan="5">No resources found.</td></tr>
         <?php endif; ?>
         </tbody>
