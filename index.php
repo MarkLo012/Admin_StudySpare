@@ -21,22 +21,20 @@ if (!isset($_SESSION['admin_id'])) {
     include 'php/db.php';
 
     $userCount = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
-    $resourceCount = $conn->query("SELECT COUNT(*) AS total FROM resources")->fetch_assoc()['total'];
     $pendingCount = $conn->query("SELECT COUNT(*) AS total FROM uploads WHERE status = 'pending'")->fetch_assoc()['total'];
     $uploadCount = $conn->query("SELECT COUNT(*) AS total FROM uploads")->fetch_assoc()['total'];
     ?>
     <div class="card-container">
       <div class="card"><h3><i class="fa-solid fa-users"></i> Users</h3><p><?= $userCount ?></p></div>
-      <div class="card"><h3><i class="fa-solid fa-book"></i> Resources</h3><p><?= $resourceCount ?></p></div>
       <div class="card"><h3><i class="fa-solid fa-clock"></i> Pending Uploads</h3><p><?= $pendingCount ?></p></div>
-      <div class="card"><h3><i class="fa-solid fa-upload"></i> Uploads</h3><p><?= $uploadCount ?></p></div>
+      <div class="card"><h3><i class="fa-solid fa-book"></i> Resources</h3><p><?= $uploadCount ?></p></div>
     </div>
 
     <div class="tables">
       <div class="latest-upload">
         <div class="heading">
           <h2>Latest Upload</h2>
-          <a href="uploads.php" class="btn">View All</a>
+          <a href="upresources.php" class="btn">View All</a>
         </div>
         <table class="luser">
           <thead>
@@ -77,7 +75,7 @@ if ($latestUploads && $latestUploads->num_rows > 0):
       <div class="latest-user">
         <div class="heading">
           <h2>Latest User</h2>
-          <a href="users.php" class="btn">View All</a>
+          <a href="user.php" class="btn">View All</a>
         </div>
         <table class="luser">
           <thead>
