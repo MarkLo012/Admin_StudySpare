@@ -12,6 +12,7 @@ if (!isset($_SESSION['admin_id'])) {
   <title>Dashboard - StudySpare</title>
   <link rel="stylesheet" href="style/index.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js -->
 </head>
 <body>
   <?php include 'include/sidebar.php'; ?>
@@ -20,29 +21,112 @@ if (!isset($_SESSION['admin_id'])) {
     <?php
     include 'php/db.php';
 
-    $userCount = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
-    $pendingCount = $conn->query("SELECT COUNT(*) AS total FROM uploads WHERE status = 'pending'")->fetch_assoc()['total'];
-    $uploadCount = $conn->query("SELECT COUNT(*) AS total FROM uploads")->fetch_assoc()['total'];
+    // ===== COUNTS =====
+    $userCount     = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
+    $resourceCount = $conn->query("SELECT COUNT(*) AS total FROM uploads WHERE status = 'approved'")->fetch_assoc()['total'];
+    $pendingCount  = $conn->query("SELECT COUNT(*) AS total FROM uploads WHERE status = 'pending'")->fetch_assoc()['total'];
+    $uploadCount   = $conn->query("SELECT COUNT(*) AS total FROM uploads")->fetch_assoc()['total'];
+
+    // ===== USERS ACTIVITY (example: active vs inactive) =====
+    $activeUsers   = $conn->query("SELECT COUNT(*) AS total FROM users WHERE status = 'active'")->fetch_assoc()['total'] ?? 0;
+    $inactiveUsers = $userCount - $activeUsers;
+
+    // ===== MOST VIEWED CATEGORIES =====
+    // Assuming uploads table has `views` column and `category` ENUM
+    $categoryViews = $conn->query("
+        SELECT category, SUM(views) AS total_views 
+        FROM uploads 
+        WHERE status = 'approved'
+        GROUP BY category
+        ORDER BY total_views DESC
+    ");
+
+    $categories = [];
+    $viewsData  = [];
+    if ($categoryViews && $categoryViews->num_rows > 0) {
+        while ($row = $categoryViews->fetch_assoc()) {
+            $categories[] = ucfirst($row['category']);
+            $viewsData[]  = (int)$row['total_views'];
+        }
+    }
     ?>
     <div class="card-container">
       <div class="card"><h3><i class="fa-solid fa-users"></i> Users</h3><p><?= $userCount ?></p></div>
+      <div class="card"><h3><i class="fa-solid fa-book"></i> Resources</h3><p><?= $resourceCount ?></p></div>
       <div class="card"><h3><i class="fa-solid fa-clock"></i> Pending Uploads</h3><p><?= $pendingCount ?></p></div>
-      <div class="card"><h3><i class="fa-solid fa-book"></i> Resources</h3><p><?= $uploadCount ?></p></div>
+      <div class="card"><h3><i class="fa-solid fa-upload"></i> Uploads</h3><p><?= $uploadCount ?></p></div>
     </div>
 
+    <!-- PIE CHARTS SECTION -->
+    <div class="chart-section" style="display:flex; justify-content:center; gap:50px; margin:40px 0;">
+      <!-- Users Chart -->
+      <div class="chart-container" style="width:400px;">
+        <h2 style="text-align:center;">Users Activity</h2>
+        <canvas id="usersChart"></canvas>
+      </div>
+      <!-- Most Viewed Categories Chart -->
+      <div class="chart-container" style="width:400px;">
+        <h2 style="text-align:center;">Most Viewed Categories</h2>
+        <canvas id="categoriesChart"></canvas>
+      </div>
+    </div>
+
+    <script>
+      // USERS PIE CHART
+      const ctxUsers = document.getElementById('usersChart').getContext('2d');
+      new Chart(ctxUsers, {
+        type: 'pie',
+        data: {
+          labels: ['Active Users', 'Inactive Users'],
+          datasets: [{
+            data: [<?= $activeUsers ?>, <?= $inactiveUsers ?>],
+            backgroundColor: ['#4CAF50', '#FFC107'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      // MOST VIEWED CATEGORIES PIE CHART
+      const ctxCategories = document.getElementById('categoriesChart').getContext('2d');
+      new Chart(ctxCategories, {
+        type: 'pie',
+        data: {
+          labels: <?= json_encode($categories) ?>,
+          datasets: [{
+            data: <?= json_encode($viewsData) ?>,
+            backgroundColor: ['#2196F3', '#9C27B0', '#FF5722', '#8BC34A'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    </script>
+    <!-- END PIE CHARTS -->
+
+    <!-- Tables Section (unchanged) -->
     <div class="tables">
       <div class="latest-upload">
         <div class="heading">
           <h2>Latest Upload</h2>
-          <a href="upresources.php" class="btn">View All</a>
+          <a href="uploads.php" class="btn">View All</a>
         </div>
         <table class="luser">
           <thead>
-            <tr><td>Name</td><td>Type</td><td>Date</td><td>Action</td></tr>
+            <tr><td>Name</td><td>Type</td><td>Category</td><td>Date</td><td>Action</td></tr>
           </thead>
           <tbody>
 <?php
-$latestUploads = $conn->query("SELECT u.id, u.title, u.type, u.file_path, u.submitted_at, a.username AS admin_name FROM uploads u LEFT JOIN admin a ON u.admin_id = a.id ORDER BY u.submitted_at DESC LIMIT 5");
+$latestUploads = $conn->query("SELECT u.id, u.title, u.type, u.category, u.file_path, u.submitted_at, a.username AS admin_name 
+                               FROM uploads u 
+                               LEFT JOIN admin a ON u.admin_id = a.id 
+                               ORDER BY u.submitted_at DESC LIMIT 5");
 
 if ($latestUploads && $latestUploads->num_rows > 0):
     while ($upload = $latestUploads->fetch_assoc()):
@@ -50,6 +134,7 @@ if ($latestUploads && $latestUploads->num_rows > 0):
   <tr>
     <td><?= htmlspecialchars($upload['title']) ?><br><small>by <?= htmlspecialchars($upload['admin_name'] ?? 'Unknown') ?></small></td>
     <td><?= htmlspecialchars($upload['type']) ?></td>
+    <td><?= htmlspecialchars($upload['category']) ?></td>
     <td><?= date('m/d/y', strtotime($upload['submitted_at'])) ?></td>
     <td>
       <a href="<?= htmlspecialchars($upload['file_path']) ?>" target="_blank" class="icon-button" title="View Resource">
@@ -64,7 +149,7 @@ if ($latestUploads && $latestUploads->num_rows > 0):
     </td>
   </tr>
 <?php endwhile; else: ?>
-  <tr><td colspan="4">No uploads found.</td></tr>
+  <tr><td colspan="5">No uploads found.</td></tr>
 <?php endif; ?>
 </tbody>
         </table>
@@ -75,7 +160,7 @@ if ($latestUploads && $latestUploads->num_rows > 0):
       <div class="latest-user">
         <div class="heading">
           <h2>Latest User</h2>
-          <a href="user.php" class="btn">View All</a>
+          <a href="users.php" class="btn">View All</a>
         </div>
         <table class="luser">
           <thead>

@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect form data
     $title = $_POST['title'];
     $type = $_POST['type'];
+    $category = $_POST['category']; // 🔹 Added category
     $file = $_FILES['file'];
 
     $fileName = basename($file['name']);
@@ -23,8 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userId = !$isAdmin && isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
         $status = $isAdmin ? 'approved' : 'pending';
 
-        // Prepare SQL
-        $sql = "INSERT INTO uploads (title, type, file_path, status, admin_id, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+        // Prepare SQL with category
+        $sql = "INSERT INTO uploads (title, type, category, file_path, status, admin_id, user_id) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
 
         if (!$stmt) {
@@ -32,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Use NULL where needed
-        $stmt->bind_param("ssssii", $title, $type, $filePath, $status, $adminId, $userId);
+        $stmt->bind_param("sssssis", $title, $type, $category, $filePath, $status, $adminId, $userId);
 
         // Execute and redirect
         if ($stmt->execute()) {

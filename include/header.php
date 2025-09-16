@@ -79,7 +79,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <option value="pdf" <?= isset($_GET['type']) && $_GET['type'] === 'pdf' ? 'selected' : '' ?>>PDFs</option>
         <option value="video" <?= isset($_GET['type']) && $_GET['type'] === 'video' ? 'selected' : '' ?>>Videos</option>
       </select>
-      <input type="date" id="date-filter" value="<?= isset($_GET['date']) ? $_GET['date'] : '' ?>">
+
+      <select id="category-filter">
+    <option value="">All Categories</option>
+    <option value="programming" <?= isset($_GET['category']) && $_GET['category'] === 'programming' ? 'selected' : '' ?>>Programming</option>
+    <option value="networking" <?= isset($_GET['category']) && $_GET['category'] === 'networking' ? 'selected' : '' ?>>Networking</option>
+    <option value="database" <?= isset($_GET['category']) && $_GET['category'] === 'database' ? 'selected' : '' ?>>Database</option>
+    <option value="others" <?= isset($_GET['category']) && $_GET['category'] === 'others' ? 'selected' : '' ?>>Others</option>
+  </select>
 
     <?php elseif ($currentPage === 'user.php'): ?>
       <select id="type-filter">
@@ -109,7 +116,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
   <!-- Profile Dropdown (always on right) -->
   <div class="profile-dropdown" onclick="toggleDropdown()">
-    <img src="image/profile.webp" alt="Profile" class="profile-pic">
+    <img src="image/profile.png" alt="Profile" class="profile-pic">
     <span class="admin-name">Admin</span>
     <i class="fa fa-caret-down"></i>
 
