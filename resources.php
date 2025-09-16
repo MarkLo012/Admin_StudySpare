@@ -67,29 +67,6 @@ $result = $conn->query($sql);
         <h2>All Uploaded Resources</h2>
       </div>
 
-      <!-- ✅ Filters -->
-      <div class="filters">
-        <input type="text" id="search-text" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
-
-        <select id="type-filter">
-          <option value="">All Types</option>
-          <option value="ebook" <?= $type === 'ebook' ? 'selected' : '' ?>>Ebooks</option>
-          <option value="pdf" <?= $type === 'pdf' ? 'selected' : '' ?>>PDFs</option>
-          <option value="video" <?= $type === 'video' ? 'selected' : '' ?>>Videos</option>
-        </select>
-
-        <select id="category-filter">
-          <option value="">All Categories</option>
-          <option value="programming" <?= $category === 'programming' ? 'selected' : '' ?>>Programming</option>
-          <option value="networking" <?= $category === 'networking' ? 'selected' : '' ?>>Networking</option>
-          <option value="database" <?= $category === 'database' ? 'selected' : '' ?>>Database</option>
-          <option value="others" <?= $category === 'others' ? 'selected' : '' ?>>Others</option>
-        </select>
-
-        <input type="date" id="date-filter" value="<?= htmlspecialchars($date) ?>">
-
-        <button onclick="applyFilters()">Search</button>
-      </div>
 
       <!-- ✅ Table -->
       <table class="luser">
